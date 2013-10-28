@@ -93,7 +93,7 @@
         if(ID != nil) [self error:MethodNotFoundError ID:ID];
         return;
     }
-    handler(params, ID, cb);
+    handler(params, cb);
 }
 
 - (void)error:(NSDictionary *)error ID:(NSNumber *)rpcID {
@@ -157,7 +157,7 @@
             NSString *method = [json objectForKey:MethodTag];
             NSDictionary *params = [json objectForKey:ParamsTag];
             NSNumber *ID = [json objectForKey:IDTag];
-            [self callHandler:method Params:params ID:ID Callback:^(id result, NSNumber *ID) {
+            [self callHandler:method Params:params ID:(NSNumber *)ID Callback:^(id result) {
                 if(ID != nil && result != nil) {
                     [self respone:result ID:ID];
                 }
