@@ -9,7 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-typedef id (^JsonRPCHandler)(NSDictionary *);
+typedef void (^JsonRPCCallback)(id, NSNumber *);
+
+typedef void (^JsonRPCHandler)(NSDictionary *, NSNumber *,JsonRPCCallback);
 
 
 @interface WebViewJsonRPC : NSObject <UIWebViewDelegate>

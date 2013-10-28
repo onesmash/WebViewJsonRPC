@@ -36,7 +36,7 @@
 
 - (void)error:(NSDictionary *)error ID:(NSNumber *)rpcID;
 - (void)respone:(id)res ID:(NSNumber *)rpcID;
-- (id)callHandler:(NSString *)name Params:(NSDictionary *)params;
+- (void)callHandler:(NSString *)name Params:(NSDictionary *)params ID:(NSNumber *)ID Callback:(JsonRPCCallback)cb;
 
 + (BOOL)valid:(NSDictionary *)dict;
 
@@ -87,10 +87,13 @@
     [self.handlers removeObjectForKey:name];
 }
 
-- (id)callHandler:(NSString *)name Params:(NSDictionary *)params{
+- (void)callHandler:(NSString *)name Params:(NSDictionary *)params ID:(NSNumber *)ID Callback:(JsonRPCCallback)cb {
     JsonRPCHandler handler = [self.handlers objectForKey:name];
-    if(!handler) return nil;
-    return handler(params);
+    if(!handler) {
+        if(ID != nil) [self error:MethodNotFoundError ID:ID];
+        return;
+    }
+    handler(params, ID, cb);
 }
 
 - (void)error:(NSDictionary *)error ID:(NSNumber *)rpcID {
@@ -154,14 +157,12 @@
             NSString *method = [json objectForKey:MethodTag];
             NSDictionary *params = [json objectForKey:ParamsTag];
             NSNumber *ID = [json objectForKey:IDTag];
-            id result = [self callHandler:method Params:params];
-            if(ID != nil) {
-                if(result != nil) {
+            [self callHandler:method Params:params ID:ID Callback:^(id result, NSNumber *ID) {
+                if(ID != nil && result != nil) {
                     [self respone:result ID:ID];
-                } else {
-                    [self error:MethodNotFoundError ID:ID];
                 }
-            }
+
+            }];
         }
         if([self.originDelegate respondsToSelector:@selector(webView:shouldStartLoadWithRequest:navigationType:)]) {
             res |= [self.originDelegate webView:webView shouldStartLoadWithRequest:request navigationType:navigationType];
