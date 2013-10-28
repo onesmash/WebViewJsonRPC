@@ -24,7 +24,7 @@
 
 #define JsFileName @"WebViewJsonRPC.js"
 
-#define JsCloseRPC @";if(window.jsonRPC) {window.jsonRPC.close()};"
+#define JsCloseRPC @";if(window.jsbridge) {window.jsbridge.close()};"
 
 #define MethodNotFoundError [NSDictionary dictionaryWithObjectsAndKeys:MethodNotFoundCode, ErrorCodeTag, MethodNotFoundMessage, ErrorMessageTag, nil]
 
@@ -80,7 +80,7 @@
 }
 
 - (void)registerHandler:(NSString *)name Handler:(JsonRPCHandler)handler {
-    [self.handlers setObject:[handler copy] forKey:name];
+    [self.handlers setObject:[[handler copy] autorelease] forKey:name];
 }
 
 - (void)unregisterHandler:(NSString *)name {
@@ -96,13 +96,13 @@
 - (void)error:(NSDictionary *)error ID:(NSNumber *)rpcID {
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:JsonRPCVer, JsonRPCScheme, error, ErrorTag, rpcID, IDTag, nil];
     NSString *tmp = [WebViewJsonRPC jsonDictToString:dict];
-    [self.webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@";window.jsonRPC.onMessage(%@);",  tmp]];
+    [self.webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@";window.jsbridge.onMessage(%@);",  tmp]];
 }
 
 - (void)respone:(id)res ID:(NSNumber *)rpcID {
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:JsonRPCVer, JsonRPCScheme, res, ResultTag, rpcID, IDTag, nil];
     NSString *tmp = [WebViewJsonRPC jsonDictToString:dict];
-    [self.webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@";window.jsonRPC.onMessage(%@);",  tmp]];
+    [self.webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@";window.jsbridge.onMessage(%@);",  tmp]];
 }
 
 + (NSString *)jsonDictToString:(NSDictionary *)json {

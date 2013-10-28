@@ -1,5 +1,5 @@
 ;(function() {
-	if(window.jsonRPC) {
+	if(window.jsbridge) {
 		return;
 	}
 
@@ -78,6 +78,6 @@
         }
     }
 
-    window.jsonRPC = jsonRPC;
+    window.jsbridge = jsonRPC;
 
 })();
