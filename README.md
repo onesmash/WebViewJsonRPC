@@ -1,4 +1,4 @@
 WebViewJsonRPC
 ==============
 
-An bridge for sending message from JavaScript to Obj-C.
+A bridge for sending message from JavaScript to Obj-C.
