@@ -157,12 +157,15 @@
             NSString *method = [json objectForKey:MethodTag];
             NSDictionary *params = [json objectForKey:ParamsTag];
             NSNumber *ID = [json objectForKey:IDTag];
-            [self callHandler:method Params:params ID:(NSNumber *)ID Callback:^(id result) {
-                if(ID != nil && result != nil) {
-                    [self respone:result ID:ID];
-                }
+            dispatch_async(dispatch_get_main_queue(), ^() {
+                [self callHandler:method Params:params ID:(NSNumber *)ID Callback:^(id result) {
+                    if(ID != nil && result != nil) {
+                        [self respone:result ID:ID];
+                    }
+                    
+                }];
 
-            }];
+            });
         }
         if([self.originDelegate respondsToSelector:@selector(webView:shouldStartLoadWithRequest:navigationType:)]) {
             res |= [self.originDelegate webView:webView shouldStartLoadWithRequest:request navigationType:navigationType];

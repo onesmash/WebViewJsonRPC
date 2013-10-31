@@ -10,6 +10,8 @@ Api Reference
 
 ###window.jsbridge.call(method_name, params, success_cb, error_cb)###
 
+
+
 ###window.jsbridge.notify(method_name, params)###
 
 ##Obj-C Api###
