@@ -61,17 +61,38 @@
     [super dealloc];
 }
 
+#pragma mark KVO
+- (void)registerKVO {
+    [_webView addObserver:self forKeyPath:@"delegate" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
+}
+
+- (void)unregisterKVO {
+    [_webView removeObserver:self forKeyPath:@"delegate"];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    id newDelegate = change[@"new"];
+    if(object == self.webView && [keyPath isEqualToString:@"delegate"] && newDelegate != self) {
+        self.originDelegate = newDelegate;
+        self.webView.delegate = self;
+    }
+}
+
+
 - (void)connect:(UIWebView *)webView {
+    if(webView == self.webView) return;
     if(self.webView != nil) {
         [self close];
     }
     self.webView = webView;
     self.originDelegate = webView.delegate;
     self.webView.delegate = self;
+    [self registerKVO];
     
 }
 
 - (void)close {
+    [self unregisterKVO];
     [self.webView stringByEvaluatingJavaScriptFromString:JsCloseRPC];
     self.webView.delegate = self.originDelegate;
     self.originDelegate = nil;

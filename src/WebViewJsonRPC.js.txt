@@ -50,7 +50,7 @@
                 method  : method, 
                 params  : params, 
             }; 
-        doCall(request, success_cb, error_cb);
+        doCall(request, null, null);
     };
 
     jsonRPC.close = function() {
